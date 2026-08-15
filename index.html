@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEON ENIGMA - Cyber Puzzle Quest</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="screen active">
+            <div class="cyber-loader">
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+                <h1 class="glitch-text" data-text="NEON ENIGMA">NEON ENIGMA</h1>
+                <p class="subtitle">Initializing Neural Interface...</p>
+                <button id="start-btn" class="cyber-btn">ENTER THE GRID</button>
+            </div>
+        </div>
+
+        <!-- Main Game Screen -->
+        <div id="game-screen" class="screen">
+            <header class="game-header">
+                <div class="player-stats">
+                    <div class="stat-box">
+                        <span class="stat-label">LEVEL</span>
+                        <span id="level-display" class="stat-value">1</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">SCORE</span>
+                        <span id="score-display" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">TIME</span>
+                        <span id="timer-display" class="stat-value">60</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div id="level-progress" class="progress-fill"></div>
+                </div>
+            </header>
+
+            <main class="game-main">
+                <div class="puzzle-container">
+                    <div class="hologram-frame">
+                        <div class="corner top-left"></div>
+                        <div class="corner top-right"></div>
+                        <div class="corner bottom-left"></div>
+                        <div class="corner bottom-right"></div>
+                        <div id="puzzle-content" class="puzzle-content">
+                            <!-- Dynamic puzzle content -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <input type="text" id="answer-input" class="cyber-input" placeholder="DECRYPT ANSWER..." autocomplete="off">
+                    <button id="submit-btn" class="cyber-btn">DECRYPT</button>
+                </div>
+
+                <div id="feedback" class="feedback"></div>
+            </main>
+
+            <aside class="game-sidebar">
+                <div class="achievements-panel">
+                    <h3>ACHIEVEMENTS</h3>
+                    <div id="achievements-list" class="achievements-list">
+                        <!-- Dynamic achievements -->
+                    </div>
+                </div>
+                <div class="power-ups-panel">
+                    <h3>POWER UPS</h3>
+                    <div class="power-up" id="hint-powerup" onclick="usePowerUp('hint')">
+                        <span class="power-up-icon">💡</span>
+                        <span class="power-up-count" id="hint-count">3</span>
+                    </div>
+                    <div class="power-up" id="time-powerup" onclick="usePowerUp('time')">
+                        <span class="power-up-icon">⏰</span>
+                        <span class="power-up-count" id="time-count">2</span>
+                    </div>
+                    <div class="power-up" id="skip-powerup" onclick="usePowerUp('skip')">
+                        <span class="power-up-icon">⚡</span>
+                        <span class="power-up-count" id="skip-count">1</span>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Level Complete Modal -->
+        <div id="level-modal" class="modal">
+            <div class="modal-content cyber-panel">
+                <h2 class="modal-title">LEVEL COMPLETE</h2>
+                <div class="level-stats">
+                    <div class="level-stat">
+                        <span class="stat-icon">🎯</span>
+                        <span id="level-score">0</span>
+                    </div>
+                    <div class="level-stat">
+                        <span class="stat-icon">⏱️</span>
+                        <span id="level-time">0s</span>
+                    </div>
+                    <div class="level-stat">
+                        <span class="stat-icon">⭐</span>
+                        <span id="level-stars">★★★</span>
+                    </div>
+                </div>
+                <button id="next-level-btn" class="cyber-btn">NEXT LEVEL</button>
+            </div>
+        </div>
+
+        <!-- Game Over Modal -->
+        <div id="gameover-modal" class="modal">
+            <div class="modal-content cyber-panel">
+                <h2 class="modal-title game-over">SYSTEM FAILURE</h2>
+                <div class="final-stats">
+                    <div class="final-stat">
+                        <span>FINAL SCORE</span>
+                        <span id="final-score">0</span>
+                    </div>
+                    <div class="final-stat">
+                        <span>LEVELS COMPLETED</span>
+                        <span id="final-levels">0</span>
+                    </div>
+                    <div class="final-stat">
+                        <span>ACHIEVEMENTS</span>
+                        <span id="final-achievements">0</span>
+                    </div>
+                </div>
+                <button id="restart-btn" class="cyber-btn">REBOOT SYSTEM</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
