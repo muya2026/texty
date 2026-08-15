@@ -1,4 +1,4 @@
-# NEON ENIGMA - Cyber Puzzle Quest
+# TEXTY - Cyber Puzzle Quest
 
 A futuristic 3D text puzzle game playable directly in your browser via GitHub Pages.
 
