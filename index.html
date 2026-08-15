@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEXTY - Ultimate Word Puzzle Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="screen active">
+        <div class="loader-content">
+            <h1 class="glitch" data-text="TEXTY">TEXTY</h1>
+            <p class="subtitle">Ultimate Word Puzzle Quest</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p class="loading-text">Initializing Neural Interface...</p>
+        </div>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="main-menu" class="screen">
+        <div class="menu-container">
+            <h1 class="game-title glitch" data-text="TEXTY">TEXTY</h1>
+            <p class="tagline">Master the Word Universe</p>
+            
+            <div class="player-stats">
+                <div class="stat-box">
+                    <span class="stat-label">Total Score</span>
+                    <span class="stat-value" id="menu-total-score">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Level</span>
+                    <span class="stat-value" id="menu-level">1</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Achievements</span>
+                    <span class="stat-value" id="menu-achievements">0/12</span>
+                </div>
+            </div>
+
+            <div class="menu-buttons">
+                <button class="btn-primary" onclick="showGameModeSelect()">
+                    <span class="btn-icon">🎮</span> Play Game
+                </button>
+                <button class="btn-secondary" onclick="showLeaderboard()">
+                    <span class="btn-icon">🏆</span> Leaderboard
+                </button>
+                <button class="btn-secondary" onclick="showAchievements()">
+                    <span class="btn-icon">⭐</span> Achievements
+                </button>
+                <button class="btn-secondary" onclick="showHowToPlay()">
+                    <span class="btn-icon">📖</span> How to Play
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Mode Selection -->
+    <div id="game-mode-select" class="screen">
+        <div class="mode-container">
+            <h2>Select Game Mode</h2>
+            <div class="mode-grid">
+                <div class="mode-card" onclick="selectMode('wordle')">
+                    <div class="mode-icon">🔤</div>
+                    <h3>Wordle</h3>
+                    <p>Guess the 5-letter word in 6 tries</p>
+                </div>
+                <div class="mode-card" onclick="selectMode('hangman')">
+                    <div class="mode-icon">🪢</div>
+                    <h3>Hangman</h3>
+                    <p>Guess the word before time runs out</p>
+                </div>
+                <div class="mode-card" onclick="selectMode('boggle')">
+                    <div class="mode-icon">🎲</div>
+                    <h3>Boggle</h3>
+                    <p>Find words in the letter grid</p>
+                </div>
+                <div class="mode-card" onclick="selectMode('wordsearch')">
+                    <div class="mode-icon">🔍</div>
+                    <h3>Word Search</h3>
+                    <p>Find hidden words in the grid</p>
+                </div>
+                <div class="mode-card" onclick="selectMode('spellingbee')">
+                    <div class="mode-icon">🐝</div>
+                    <h3>Spelling Bee</h3>
+                    <p>Create words from 7 letters</p>
+                </div>
+                <div class="mode-card" onclick="selectMode('unscramble')">
+                    <div class="mode-icon">🔀</div>
+                    <h3>Unscramble</h3>
+                    <p>Rearrange letters to form words</p>
+                </div>
+                <div class="mode-card" onclick="selectMode('connections')">
+                    <div class="mode-icon">🔗</div>
+                    <h3>Connections</h3>
+                    <p>Group words by category</p>
+                </div>
+                <div class="mode-card" onclick="selectMode('scrabble')">
+                    <div class="mode-icon">📝</div>
+                    <h3>Quick Scrabble</h3>
+                    <p>Create high-scoring words</p>
+                </div>
+            </div>
+            <button class="btn-back" onclick="showMainMenu()">← Back to Menu</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div class="nav-left">
+                <button class="nav-btn" onclick="pauseGame()">⏸️</button>
+                <span class="game-mode-title" id="current-mode">Wordle</span>
+            </div>
+            <div class="nav-center">
+                <div class="score-display">
+                    <span class="score-label">Score:</span>
+                    <span class="score-value" id="game-score">0</span>
+                </div>
+                <div class="timer-display" id="timer-display">
+                    <span class="timer-label">Time:</span>
+                    <span class="timer-value" id="game-timer">00:00</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button class="nav-btn" onclick="showHint()" title="Hint">💡</button>
+                <button class="nav-btn" onclick="showResults()" title="Results">📊</button>
+                <button class="nav-btn" onclick="quitGame()" title="Quit">🚪</button>
+            </div>
+        </div>
+
+        <!-- Game Content -->
+        <div class="game-content">
+            <!-- Wordle -->
+            <div id="wordle-game" class="game-mode hidden">
+                <div class="wordle-container">
+                    <div class="wordle-grid" id="wordle-grid"></div>
+                    <div class="wordle-keyboard" id="wordle-keyboard"></div>
+                    <p class="game-instruction">Guess the 5-letter word in 6 attempts</p>
+                </div>
+            </div>
+
+            <!-- Hangman -->
+            <div id="hangman-game" class="game-mode hidden">
+                <div class="hangman-container">
+                    <div class="hangman-drawing" id="hangman-drawing"></div>
+                    <div class="hangman-word" id="hangman-word"></div>
+                    <div class="hangman-keyboard" id="hangman-keyboard"></div>
+                    <p class="game-instruction">Guess the word before the hangman is complete</p>
+                </div>
+            </div>
+
+            <!-- Boggle -->
+            <div id="boggle-game" class="game-mode hidden">
+                <div class="boggle-container">
+                    <div class="boggle-grid" id="boggle-grid"></div>
+                    <div class="boggle-found" id="boggle-found">
+                        <h4>Found Words:</h4>
+                        <div class="found-words-list"></div>
+                    </div>
+                    <div class="boggle-input">
+                        <input type="text" id="boggle-input" placeholder="Type a word..." maxlength="10">
+                        <button onclick="submitBoggleWord()">Submit</button>
+                    </div>
+                    <p class="game-instruction">Find as many words as possible (min 3 letters)</p>
+                </div>
+            </div>
+
+            <!-- Word Search -->
+            <div id="wordsearch-game" class="game-mode hidden">
+                <div class="wordsearch-container">
+                    <div class="wordsearch-grid" id="wordsearch-grid"></div>
+                    <div class="wordsearch-words" id="wordsearch-words">
+                        <h4>Find these words:</h4>
+                        <div class="words-to-find"></div>
+                    </div>
+                    <p class="game-instruction">Click and drag to select words</p>
+                </div>
+            </div>
+
+            <!-- Spelling Bee -->
+            <div id="spellingbee-game" class="game-mode hidden">
+                <div class="spellingbee-container">
+                    <div class="bee-hive">
+                        <div class="center-letter" id="bee-center"></div>
+                        <div class="outer-letters" id="bee-outer"></div>
+                    </div>
+                    <div class="spellingbee-input">
+                        <input type="text" id="bee-input" placeholder="Type a word..." maxlength="15">
+                        <button onclick="submitBeeWord()">Submit</button>
+                    </div>
+                    <div class="spellingbee-found" id="bee-found">
+                        <h4>Found Words:</h4>
+                        <div class="found-words"></div>
+                    </div>
+                    <p class="game-instruction">Create words using all letters. Must include center letter!</p>
+                </div>
+            </div>
+
+            <!-- Unscramble -->
+            <div id="unscramble-game" class="game-mode hidden">
+                <div class="unscramble-container">
+                    <div class="scrambled-letters" id="unscramble-letters"></div>
+                    <div class="unscramble-input">
+                        <input type="text" id="unscramble-input" placeholder="Type the unscrambled word..." maxlength="10">
+                        <button onclick="submitUnscrambleWord()">Submit</button>
+                    </div>
+                    <div class="unscramble-hint" id="unscramble-hint"></div>
+                    <p class="game-instruction">Rearrange the letters to form the correct word</p>
+                </div>
+            </div>
+
+            <!-- Connections -->
+            <div id="connections-game" class="game-mode hidden">
+                <div class="connections-container">
+                    <div class="connections-grid" id="connections-grid"></div>
+                    <div class="connections-groups" id="connections-groups">
+                        <h4>Groups Found:</h4>
+                        <div class="groups-found"></div>
+                    </div>
+                    <p class="game-instruction">Select 4 words that share a common theme</p>
+                </div>
+            </div>
+
+            <!-- Scrabble -->
+            <div id="scrabble-game" class="game-mode hidden">
+                <div class="scrabble-container">
+                    <div class="scrabble-rack" id="scrabble-rack"></div>
+                    <div class="scrabble-board" id="scrabble-board"></div>
+                    <div class="scrabble-input">
+                        <input type="text" id="scrabble-input" placeholder="Type your word..." maxlength="8">
+                        <button onclick="submitScrabbleWord()">Play Word</button>
+                    </div>
+                    <div class="scrabble-score" id="scrabble-round-score">Round Score: 0</div>
+                    <p class="game-instruction">Create words from your letter tiles</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pause Modal -->
+    <div id="pause-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Game Paused</h2>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="resumeGame()">Resume</button>
+                <button class="btn-secondary" onclick="showResultsFromPause()">View Results</button>
+                <button class="btn-secondary" onclick="quitGame()">Quit Game</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div id="results-modal" class="modal hidden">
+        <div class="modal-content results-content">
+            <h2>🎯 Game Results</h2>
+            <div class="results-stats">
+                <div class="result-item">
+                    <span class="result-label">Game Mode</span>
+                    <span class="result-value" id="result-mode">Wordle</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Score</span>
+                    <span class="result-value" id="result-score">0</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Time</span>
+                    <span class="result-value" id="result-time">00:00</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Words Found</span>
+                    <span class="result-value" id="result-words">0</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Accuracy</span>
+                    <span class="result-value" id="result-accuracy">0%</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Stars</span>
+                    <span class="result-value" id="result-stars">⭐</span>
+                </div>
+            </div>
+            <div class="quote-section">
+                <p class="result-quote" id="result-quote">"The limits of my language mean the limits of my world."</p>
+                <p class="result-author" id="result-author">- Ludwig Wittgenstein 🇦🇹</p>
+            </div>
+            <div class="share-section">
+                <h3>📤 Share Your Victory</h3>
+                <div class="share-buttons">
+                    <button class="share-btn twitter" onclick="shareResult('twitter')" title="Share on Twitter/X">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </button>
+                    <button class="share-btn facebook" onclick="shareResult('facebook')" title="Share on Facebook">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </button>
+                    <button class="share-btn linkedin" onclick="shareResult('linkedin')" title="Share on LinkedIn">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="playAgain()">Play Again</button>
+                <button class="btn-secondary" onclick="showMainMenu()">Main Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboard-modal" class="modal hidden">
+        <div class="modal-content leaderboard-content">
+            <h2>🏆 Leaderboard</h2>
+            <div class="leaderboard-tabs">
+                <button class="tab-btn active" onclick="showLeaderboardTab('all')">All Time</button>
+                <button class="tab-btn" onclick="showLeaderboardTab('weekly')">Weekly</button>
+                <button class="tab-btn" onclick="showLeaderboardTab('daily')">Daily</button>
+            </div>
+            <div class="leaderboard-list" id="leaderboard-list">
+                <!-- Populated by JS -->
+            </div>
+            <button class="btn-back" onclick="closeModal('leaderboard-modal')">Back</button>
+        </div>
+    </div>
+
+    <!-- Achievements Modal -->
+    <div id="achievements-modal" class="modal hidden">
+        <div class="modal-content achievements-content">
+            <h2>⭐ Achievements</h2>
+            <div class="achievements-grid" id="achievements-grid">
+                <!-- Populated by JS -->
+            </div>
+            <button class="btn-back" onclick="closeModal('achievements-modal')">Back</button>
+        </div>
+    </div>
+
+    <!-- How to Play Modal -->
+    <div id="howto-modal" class="modal hidden">
+        <div class="modal-content howto-content">
+            <h2>📖 How to Play</h2>
+            <div class="howto-modes">
+                <div class="howto-mode">
+                    <h3>🔤 Wordle</h3>
+                    <p>Guess the 5-letter word in 6 attempts. Green = correct position, Yellow = wrong position, Gray = not in word.</p>
+                </div>
+                <div class="howto-mode">
+                    <h3>🪢 Hangman</h3>
+                    <p>Guess letters to reveal the hidden word. Don't let the hangman drawing complete!</p>
+                </div>
+                <div class="howto-mode">
+                    <h3>🎲 Boggle</h3>
+                    <p>Find words by connecting adjacent letters in the 4x4 grid. Words must be 3+ letters.</p>
+                </div>
+                <div class="howto-mode">
+                    <h3>🔍 Word Search</h3>
+                    <p>Find hidden words in the grid. Words can be horizontal, vertical, or diagonal.</p>
+                </div>
+                <div class="howto-mode">
+                    <h3>🐝 Spelling Bee</h3>
+                    <p>Create words using the 7 given letters. Must include the center letter!</p>
+                </div>
+                <div class="howto-mode">
+                    <h3>🔀 Unscramble</h3>
+                    <p>Rearrange scrambled letters to form the correct word.</p>
+                </div>
+                <div class="howto-mode">
+                    <h3>🔗 Connections</h3>
+                    <p>Group 4 words that share a common theme or category.</p>
+                </div>
+                <div class="howto-mode">
+                    <h3>📝 Quick Scrabble</h3>
+                    <p>Create high-scoring words from your letter tiles.</p>
+                </div>
+            </div>
+            <button class="btn-back" onclick="closeModal('howto-modal')">Back</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
