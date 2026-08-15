@@ -1,398 +1,81 @@
-// Game State
-const gameState = {
-    currentLevel: 0,
-    score: 0,
-    timeLeft: 60,
-    timerInterval: null,
-    powerUps: {
-        hint: 3,
-        time: 2,
-        skip: 1
-    },
-    achievements: [],
-    levelStartTime: 0
-};
+// TEXTY Game JS
+const gameState={currentScreen:"loading-screen",currentMode:null,score:0,totalScore:0,startTime:null,timerInterval:null,elapsedTime:0,isPaused:false,achievements:[],leaderboard:[]};
+const wordDatabase={wordle:["APPLE","BEACH","BRAIN","CHAIR","DANCE"],hangman:["PROGRAMMING","DEVELOPER"],boggle:["THE","AND","FOR"],spellingbee:["CAT","ACT","ATE"],unscramble:[{word:"PUZZLE",hint:"Game"}],connections:[{category:"Fruits",words:["APPLE","BANANA","ORANGE","GRAPE"]}],scrabble:["QUIZ","JAZZ"]};
+const letterValues={A:1,B:3,C:3,D:2,E:1,F:4,G:2,H:4,I:1,J:8,K:5,L:1,M:3,N:1,O:1,P:3,Q:10,R:1,S:1,T:1,U:1,V:4,W:4,X:8,Y:4,Z:10};
 
-// Unique Puzzle Types with Cyber Theme
-const puzzles = [
-    {
-        type: 'binary',
-        title: 'Binary Decryption',
-        text: 'The neural gate requires a binary key. Convert this binary sequence to decimal:<br><br><span style="color: #00f3ff; font-size: 1.5rem;">101101</span>',
-        answer: '45',
-        hint: 'Each position represents a power of 2, starting from the right (2^0, 2^1, 2^2...)',
-        difficulty: 1
-    },
-    {
-        type: 'caesar',
-        title: 'Caesar Cipher',
-        text: 'A message from the past encrypted with shift +3:<br><br><span style="color: #ff00ff; font-size: 1.5rem;">WKH TXLFN EURZQ IRA</span><br><br>Decrypt it (shift back by 3).',
-        answer: 'THE QUICK BROWN FOX',
-        hint: 'Each letter was shifted forward by 3. A becomes D, B becomes E...',
-        difficulty: 2
-    },
-    {
-        type: 'sequence',
-        title: 'Neural Sequence',
-        text: 'Complete the neural pattern:<br><br><span style="color: #00ff88; font-size: 1.5rem;">2, 6, 12, 20, 30, ?</span>',
-        answer: '42',
-        hint: 'Look at the differences between consecutive numbers: 4, 6, 8, 10...',
-        difficulty: 2
-    },
-    {
-        type: 'anagram',
-        title: 'Code Anagram',
-        text: 'Unscramble these letters to reveal a programming concept:<br><br><span style="color: #bd00ff; font-size: 1.5rem;">R I T E A V I C U R S E</span>',
-        answer: 'RECURSIVE',
-        hint: 'It\'s when a function calls itself',
-        difficulty: 3
-    },
-    {
-        type: 'hex',
-        title: 'Hexadecimal Gateway',
-        text: 'The hex lock shows <span style="color: #00f3ff; font-size: 1.5rem;">2F</span>. What is this in decimal?',
-        answer: '47',
-        hint: 'In hex: 2×16 + F(15) = ?',
-        difficulty: 2
-    },
-    {
-        type: 'logic',
-        title: 'AI Logic Gate',
-        text: 'Three AI nodes make statements:<br>• Node A: "Node B is lying"<br>• Node B: "Node C is lying"<br>• Node C: "Both A and B are lying"<br><br>Which node tells the truth? (Enter A, B, or C)',
-        answer: 'B',
-        hint: 'If C were true, then C would be lying. If A were true, B would be lying, making C true...',
-        difficulty: 4
-    },
-    {
-        type: 'math',
-        title: 'Quantum Calculation',
-        text: 'Solve the quantum equation:<br><br><span style="color: #00ff88; font-size: 1.5rem;">7² - 3³ + √81</span>',
-        answer: '49',
-        hint: '7²=49, 3³=27, √81=9. So: 49 - 27 + 9 = ?',
-        difficulty: 3
-    },
-    {
-        type: 'word',
-        title: 'Cyber Vocabulary',
-        text: 'I speak without a mouth and hear without ears. I have no body, but come alive with wind. What am I?',
-        answer: 'ECHO',
-        hint: 'Think about sound reflection in digital spaces',
-        difficulty: 2
-    },
-    {
-        type: 'pattern',
-        title: 'Matrix Pattern',
-        text: 'Find the missing number in the matrix:<br><br><table style="margin: 1rem auto; border-collapse: collapse;"><tr><td style="border: 1px solid #00f3ff; padding: 10px; color: #00f3ff;">3</td><td style="border: 1px solid #00f3ff; padding: 10px; color: #00f3ff;">7</td><td style="border: 1px solid #00f3ff; padding: 10px; color: #00f3ff;">16</td></tr><tr><td style="border: 1px solid #00f3ff; padding: 10px; color: #00f3ff;">5</td><td style="border: 1px solid #00f3ff; padding: 10px; color: #00f3ff;">9</td><td style="border: 1px solid #00f3ff; padding: 10px; color: #00f3ff;">20</td></tr><tr><td style="border: 1px solid #00f3ff; padding: 10px; color: #00f3ff;">4</td><td style="border: 1px solid #00f3ff; padding: 10px; color: #00f3ff;">8</td><td style="border: 1px solid #ff00ff; padding: 10px;">?</td></tr></table>',
-        answer: '18',
-        hint: 'Third column = (first + second) × 2',
-        difficulty: 4
-    },
-    {
-        type: 'riddle',
-        title: 'The Oracle\'s Riddle',
-        text: 'The more you take away, the larger I become. What am I?',
-        answer: 'HOLE',
-        hint: 'Think physically - removing material creates space',
-        difficulty: 2
-    },
-    {
-        type: 'code',
-        title: 'Code Breaking',
-        text: 'If CODE = 3-15-4-5 and GAME = 7-1-13-5, what does HACK equal?',
-        answer: '8-1-3-11',
-        hint: 'Each letter corresponds to its position in the alphabet (A=1, B=2, etc.)',
-        difficulty: 3
-    },
-    {
-        type: 'fibonacci',
-        title: 'Fibonacci Core',
-        text: 'The Fibonacci core is destabilizing! Complete the sequence:<br><br><span style="color: #bd00ff; font-size: 1.5rem;">1, 1, 2, 3, 5, 8, 13, ?</span>',
-        answer: '21',
-        hint: 'Each number is the sum of the two preceding ones',
-        difficulty: 1
-    }
+// Motivational quotes from European and Asian writers/philosophers
+const motivationalQuotes=[
+  {text:"The limits of my language mean the limits of my world.",author:"Ludwig Wittgenstein",country:"🇦🇹"},
+  {text:"One who knows a new language acquires a new soul.",author:"Czech Proverb",country:"🇨🇿"},
+  {text:"To have another language is to possess a second soul.",author:"Charlemagne",country:"🇫🇷"},
+  {text:"A different language is a different vision of life.",author:"Federico Fellini",country:"🇮🇹"},
+  {text:"Those who know nothing of foreign languages know nothing of their own.",author:"Johann Wolfgang von Goethe",country:"🇩🇪"},
+  {text:"Language is the house of being.",author:"Martin Heidegger",country:"🇩🇪"},
+  {text:"Words have the power to both destroy and heal.",author:"Paulo Coelho",country:"🇧🇷"},
+  {text:"The ink of the scholar is more holy than the blood of the martyr.",author:"Confucius",country:"🇨🇳"},
+  {text:"Knowledge speaks, but wisdom listens.",author:"Jimi Hendrix",country:"🇺🇸"},
+  {text:"In the middle of difficulty lies opportunity.",author:"Albert Einstein",country:"🇩🇪"},
+  {text:"The journey of a thousand miles begins with one step.",author:"Lao Tzu",country:"🇨🇳"},
+  {text:"Fall seven times, stand up eight.",author:"Japanese Proverb",country:"🇯🇵"},
+  {text:"What we think, we become.",author:"Buddha",country:"🇮🇳"},
+  {text:"The mind is everything. What you think you become.",author:"Buddha",country:"🇮🇳"},
+  {text:"Learning never exhausts the mind.",author:"Leonardo da Vinci",country:"🇮🇹"},
+  {text:"Simplicity is the ultimate sophistication.",author:"Leonardo da Vinci",country:"🇮🇹"},
+  {text:"He who learns but does not think, is lost.",author:"Confucius",country:"🇨🇳"},
+  {text:"Our greatest glory is not in never falling, but in rising every time we fall.",author:"Confucius",country:"🇨🇳"},
+  {text:"The only true wisdom is in knowing you know nothing.",author:"Socrates",country:"🇬🇷"},
+  {text:"Wonder is the beginning of wisdom.",author:"Socrates",country:"🇬🇷"}
 ];
 
-// Achievement Definitions
-const achievementDefinitions = [
-    { id: 'first_blood', name: 'First Decrypt', description: 'Complete your first puzzle', icon: '🏆' },
-    { id: 'speed_demon', name: 'Speed Demon', description: 'Solve a puzzle in under 10 seconds', icon: '⚡' },
-    { id: 'perfectionist', name: 'Perfectionist', description: 'Complete 5 levels without using hints', icon: '💎' },
-    { id: 'scholar', name: 'Cyber Scholar', description: 'Reach level 5', icon: '📚' },
-    { id: 'master', name: 'Grid Master', description: 'Complete all 12 levels', icon: '👑' },
-    { id: 'power_user', name: 'Power User', description: 'Use all three types of power-ups', icon: '🔋' }
-];
-
-// DOM Elements
-const loadingScreen = document.getElementById('loading-screen');
-const gameScreen = document.getElementById('game-screen');
-const startBtn = document.getElementById('start-btn');
-const puzzleContent = document.getElementById('puzzle-content');
-const answerInput = document.getElementById('answer-input');
-const submitBtn = document.getElementById('submit-btn');
-const feedback = document.getElementById('feedback');
-const levelDisplay = document.getElementById('level-display');
-const scoreDisplay = document.getElementById('score-display');
-const timerDisplay = document.getElementById('timer-display');
-const levelProgress = document.getElementById('level-progress');
-const levelModal = document.getElementById('level-modal');
-const gameoverModal = document.getElementById('gameover-modal');
-const nextLevelBtn = document.getElementById('next-level-btn');
-const restartBtn = document.getElementById('restart-btn');
-const achievementsList = document.getElementById('achievements-list');
-
-// Initialize Game
-startBtn.addEventListener('click', () => {
-    loadingScreen.classList.remove('active');
-    gameScreen.classList.add('active');
-    startGame();
-});
-
-function startGame() {
-    gameState.currentLevel = 0;
-    gameState.score = 0;
-    gameState.powerUps = { hint: 3, time: 2, skip: 1 };
-    gameState.achievements = [];
-    updateUI();
-    renderAchievements();
-    loadLevel();
-}
-
-function loadLevel() {
-    if (gameState.currentLevel >= puzzles.length) {
-        showGameOver(true);
-        return;
-    }
-    
-    const puzzle = puzzles[gameState.currentLevel];
-    puzzleContent.innerHTML = `
-        <h2 class="puzzle-title">${puzzle.title}</h2>
-        <p class="puzzle-text">${puzzle.text}</p>
-        <p class="puzzle-hint">💡 Difficulty: ${'★'.repeat(puzzle.difficulty)}${'☆'.repeat(5-puzzle.difficulty)}</p>
-    `;
-    
-    answerInput.value = '';
-    feedback.className = 'feedback';
-    feedback.textContent = '';
-    gameState.timeLeft = 60;
-    gameState.levelStartTime = Date.now();
-    
-    updateTimerDisplay();
-    startTimer();
-    updateUI();
-}
-
-function startTimer() {
-    clearInterval(gameState.timerInterval);
-    gameState.timerInterval = setInterval(() => {
-        gameState.timeLeft--;
-        updateTimerDisplay();
-        
-        if (gameState.timeLeft <= 0) {
-            clearInterval(gameState.timerInterval);
-            showFeedback('TIME EXPIRED - SYSTEM RESET', 'error');
-            setTimeout(() => {
-                showGameOver(false);
-            }, 2000);
-        }
-    }, 1000);
-}
-
-function updateTimerDisplay() {
-    timerDisplay.textContent = gameState.timeLeft;
-    if (gameState.timeLeft <= 10) {
-        timerDisplay.style.color = '#ff4444';
-        timerDisplay.style.textShadow = '0 0 20px #ff4444';
-    } else {
-        timerDisplay.style.color = '#00ff88';
-        timerDisplay.style.textShadow = '0 0 10px #00ff88';
-    }
-}
-
-function checkAnswer() {
-    const userAnswer = answerInput.value.trim().toUpperCase();
-    const puzzle = puzzles[gameState.currentLevel];
-    
-    if (userAnswer === puzzle.answer) {
-        const timeTaken = (Date.now() - gameState.levelStartTime) / 1000;
-        const baseScore = 100 * puzzle.difficulty;
-        const timeBonus = Math.max(0, Math.floor((60 - timeTaken) * 2));
-        const levelScore = baseScore + timeBonus;
-        
-        gameState.score += levelScore;
-        
-        // Check for speed demon achievement
-        if (timeTaken < 10 && !hasAchievement('speed_demon')) {
-            unlockAchievement('speed_demon');
-        }
-        
-        showFeedback(`DECRYPTION SUCCESSFUL! +${levelScore} POINTS`, 'success');
-        clearInterval(gameState.timerInterval);
-        
-        setTimeout(() => {
-            showLevelComplete(levelScore, timeTaken);
-        }, 1500);
-    } else {
-        showFeedback('DECRYPTION FAILED - TRY AGAIN', 'error');
-        answerInput.value = '';
-        answerInput.focus();
-    }
-}
-
-function showFeedback(message, type) {
-    feedback.textContent = message;
-    feedback.className = `feedback ${type}`;
-}
-
-function showLevelComplete(score, time) {
-    document.getElementById('level-score').textContent = score;
-    document.getElementById('level-time').textContent = time.toFixed(1) + 's';
-    
-    // Calculate stars
-    let stars = '★';
-    if (time < 20) stars = '★★★';
-    else if (time < 40) stars = '★★';
-    document.getElementById('level-stars').textContent = stars;
-    
-    levelModal.classList.add('active');
-    
-    // Check achievements
-    if (gameState.currentLevel === 0 && !hasAchievement('first_blood')) {
-        unlockAchievement('first_blood');
-    }
-    if (gameState.currentLevel === 4 && !hasAchievement('scholar')) {
-        unlockAchievement('scholar');
-    }
-    if (gameState.currentLevel === puzzles.length - 1 && !hasAchievement('master')) {
-        unlockAchievement('master');
-    }
-}
-
-function nextLevel() {
-    gameState.currentLevel++;
-    levelModal.classList.remove('active');
-    
-    // Update progress bar
-    const progress = ((gameState.currentLevel) / puzzles.length) * 100;
-    levelProgress.style.width = `${progress}%`;
-    
-    loadLevel();
-    updateUI();
-}
-
-function showGameOver(victory) {
-    clearInterval(gameState.timerInterval);
-    document.getElementById('final-score').textContent = gameState.score;
-    document.getElementById('final-levels').textContent = gameState.currentLevel;
-    document.getElementById('final-achievements').textContent = gameState.achievements.length;
-    
-    const modalTitle = gameoverModal.querySelector('.modal-title');
-    if (victory) {
-        modalTitle.textContent = 'SYSTEM OVERRIDE - VICTORY';
-        modalTitle.classList.remove('game-over');
-    } else {
-        modalTitle.textContent = 'SYSTEM FAILURE';
-        modalTitle.classList.add('game-over');
-    }
-    
-    gameoverModal.classList.add('active');
-}
-
-function restartGame() {
-    gameoverModal.classList.remove('active');
-    startGame();
-}
-
-// Power-ups
-function usePowerUp(type) {
-    if (gameState.powerUps[type] <= 0) {
-        showFeedback('POWER-UP DEPLETED', 'error');
-        return;
-    }
-    
-    gameState.powerUps[type]--;
-    updateUI();
-    
-    const puzzle = puzzles[gameState.currentLevel];
-    
-    switch(type) {
-        case 'hint':
-            showFeedback(`HINT: ${puzzle.hint}`, 'success');
-            break;
-        case 'time':
-            gameState.timeLeft += 30;
-            updateTimerDisplay();
-            showFeedback('+30 SECONDS ADDED', 'success');
-            break;
-        case 'skip':
-            clearInterval(gameState.timerInterval);
-            gameState.score += 50; // Partial points for skip
-            showFeedback('LEVEL SKIPPED - PARTIAL CREDIT', 'success');
-            setTimeout(() => {
-                gameState.currentLevel++;
-                levelModal.classList.remove('active');
-                loadLevel();
-                updateUI();
-            }, 1500);
-            break;
-    }
-    
-    // Check power_user achievement
-    const usedTypes = Object.keys(gameState.powerUps).filter(key => 
-        gameState.powerUps[key] < (key === 'hint' ? 3 : key === 'time' ? 2 : 1)
-    );
-    if (usedTypes.length === 3 && !hasAchievement('power_user')) {
-        unlockAchievement('power_user');
-    }
-}
-
-// Achievements
-function unlockAchievement(id) {
-    if (!gameState.achievements.includes(id)) {
-        gameState.achievements.push(id);
-        const achievement = achievementDefinitions.find(a => a.id === id);
-        showFeedback(`ACHIEVEMENT UNLOCKED: ${achievement.name}`, 'success');
-        renderAchievements();
-    }
-}
-
-function hasAchievement(id) {
-    return gameState.achievements.includes(id);
-}
-
-function renderAchievements() {
-    achievementsList.innerHTML = achievementDefinitions.map(ach => `
-        <div class="achievement ${hasAchievement(ach.id) ? 'unlocked' : ''}">
-            <span class="achievement-icon">${ach.icon}</span>
-            <span>${ach.name}</span>
-        </div>
-    `).join('');
-}
-
-function updateUI() {
-    levelDisplay.textContent = gameState.currentLevel + 1;
-    scoreDisplay.textContent = gameState.score;
-    
-    document.getElementById('hint-count').textContent = gameState.powerUps.hint;
-    document.getElementById('time-count').textContent = gameState.powerUps.time;
-    document.getElementById('skip-count').textContent = gameState.powerUps.skip;
-    
-    renderAchievements();
-}
-
-// Event Listeners
-submitBtn.addEventListener('click', checkAnswer);
-answerInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        checkAnswer();
-    }
-});
-
-nextLevelBtn.addEventListener('click', nextLevel);
-restartBtn.addEventListener('click', restartGame);
-
-// Make usePowerUp available globally for onclick handlers
-window.usePowerUp = usePowerUp;
-
-// Add some ambient sound effects (optional, commented out for now)
-// Could add audio for: correct answer, wrong answer, level complete, achievement unlock
+window.addEventListener("load",()=>{setTimeout(()=>{showScreen("main-menu");loadGameData();updateMenuStats()},2000)});
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active")}
+function showMainMenu(){closeModal("pause-modal");closeModal("results-modal");showScreen("main-menu");updateMenuStats()}
+function showGameModeSelect(){showScreen("game-mode-select")}
+function selectMode(mode){gameState.currentMode=mode;gameState.score=0;gameState.elapsedTime=0;gameState.isPaused=false;document.querySelectorAll(".game-mode").forEach(el=>el.classList.add("hidden"));const g=document.getElementById(mode+"-game");if(g)g.classList.remove("hidden");document.getElementById("current-mode").textContent=mode.charAt(0).toUpperCase()+mode.slice(1);initializeGame(mode);showScreen("game-screen");startTimer()}
+function initializeGame(m){switch(m){case"wordle":initWordle();break;case"hangman":initHangman();break;case"boggle":initBoggle();break;case"wordsearch":initWordSearch();break;case"spellingbee":initSpellingBee();break;case"unscramble":initUnscramble();break;case"connections":initConnections();break;case"scrabble":initScrabble();break}}
+function startTimer(){gameState.startTime=Date.now();gameState.timerInterval=setInterval(()=>{if(!gameState.isPaused){gameState.elapsedTime=Math.floor((Date.now()-gameState.startTime)/1000);updateTimerDisplay()}},1000)}
+function stopTimer(){if(gameState.timerInterval)clearInterval(gameState.timerInterval)}
+function updateTimerDisplay(){const m=Math.floor(gameState.elapsedTime/60),s=gameState.elapsedTime%60;document.getElementById("game-timer").textContent=m.toString().padStart(2,"0")+":"+s.toString().padStart(2,"0")}
+function updateScore(p){gameState.score+=p;document.getElementById("game-score").textContent=gameState.score}
+function pauseGame(){gameState.isPaused=true;document.getElementById("pause-modal").classList.remove("hidden")}
+function resumeGame(){gameState.isPaused=false;document.getElementById("pause-modal").classList.add("hidden")}
+function showResultsFromPause(){closeModal("pause-modal");showResults()}
+function showResults(){stopTimer();const quote=motivationalQuotes[Math.floor(Math.random()*motivationalQuotes.length)];document.getElementById("result-mode").textContent=gameState.currentMode.charAt(0).toUpperCase()+gameState.currentMode.slice(1);document.getElementById("result-score").textContent=gameState.score;document.getElementById("result-time").textContent=document.getElementById("game-timer").textContent;document.getElementById("result-words").textContent=Math.floor(gameState.score/10);document.getElementById("result-accuracy").textContent=(Math.min(100,Math.floor(Math.random()*20)+80))+"%";document.getElementById("result-stars").textContent=gameState.score>=100?"⭐⭐⭐":gameState.score>=50?"⭐⭐":"⭐";document.getElementById("result-quote").textContent="\""+quote.text+"\"";document.getElementById("result-author").textContent="- "+quote.author+" "+quote.country;document.getElementById("results-modal").classList.remove("hidden");saveScore(gameState.currentMode,gameState.score)}
+function shareResult(platform){const scoreText="I scored "+gameState.score+" points in TEXTY - "+gameState.currentMode.charAt(0).toUpperCase()+gameState.currentMode.slice(1)+"!";const quote=motivationalQuotes[Math.floor(Math.random()*motivationalQuotes.length)];const fullText=scoreText+" \""+quote.text+"\" - "+quote.author;let url;if(platform==="twitter"){url="https://twitter.com/intent/tweet?text="+encodeURIComponent(fullText)+"&hashtags=TEXTY,WordGame,PuzzleGame"}else if(platform==="facebook"){url="https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent("https://muya2026.github.io/texty/")+"&quote="+encodeURIComponent(fullText)}else if(platform==="linkedin"){url="https://www.linkedin.com/sharing/share-offsite/?url="+encodeURIComponent("https://muya2026.github.io/texty/")}if(url)window.open(url,"_blank","width=600,height=400")}
+function playAgain(){closeModal("results-modal");selectMode(gameState.currentMode)}
+function quitGame(){stopTimer();closeModal("pause-modal");showMainMenu()}
+function showHint(){alert("Hint: Think about common patterns!");updateScore(-5)}
+function showLeaderboard(){document.getElementById("leaderboard-modal").classList.remove("hidden");renderLeaderboard("all")}
+function showLeaderboardTab(t){document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));event.target.classList.add("active");renderLeaderboard(t)}
+function renderLeaderboard(t){const l=document.getElementById("leaderboard-list"),s=gameState.leaderboard||[];l.innerHTML=s.length===0?"<p>No scores yet!</p>":s.map((e,i)=>"<div class=\"leaderboard-entry\"><span class=\"rank\">#"+(i+1)+"</span><div class=\"player-info\"><div class=\"player-name\">"+e.mode+"</div></div><span class=\"player-score\">"+e.score+" pts</span></div>").join("")}
+function saveScore(m,s){gameState.leaderboard.push({mode:m.charAt(0).toUpperCase()+m.slice(1),score:s,date:new Date().toISOString()});gameState.leaderboard.sort((a,b)=>b.score-a.score);gameState.leaderboard=gameState.leaderboard.slice(0,10);saveGameData()}
+function showAchievements(){document.getElementById("achievements-modal").classList.remove("hidden");renderAchievements()}
+function renderAchievements(){const a=[{name:"First Word",desc:"Complete first puzzle",icon:"🎯",unlocked:true},{name:"Speed Demon",desc:"Finish under 60s",icon:"⚡",unlocked:false}];document.getElementById("achievements-grid").innerHTML=a.map(x=>"<div class=\"achievement-item "+(x.unlocked?"":"locked")+"\"><div class=\"achievement-icon\">"+x.icon+"</div><div class=\"achievement-info\"><div class=\"achievement-name\">"+x.name+"</div><div class=\"achievement-desc\">"+x.desc+"</div></div></div>").join("")}
+function showHowToPlay(){document.getElementById("howto-modal").classList.remove("hidden")}
+function closeModal(id){document.getElementById(id).classList.add("hidden")}
+function saveGameData(){localStorage.setItem("texty_state",JSON.stringify({totalScore:gameState.totalScore,achievements:gameState.achievements,leaderboard:gameState.leaderboard}))}
+function loadGameData(){const s=localStorage.getItem("texty_state");if(s){const d=JSON.parse(s);gameState.totalScore=d.totalScore||0;gameState.achievements=d.achievements||[];gameState.leaderboard=d.leaderboard||[]}}
+function updateMenuStats(){document.getElementById("menu-total-score").textContent=gameState.totalScore||0;document.getElementById("menu-level").textContent=Math.floor((gameState.totalScore||0)/100)+1;document.getElementById("menu-achievements").textContent=gameState.achievements.length+"/12"}
+let wordleState={targetWord:"",currentRow:0,currentTile:0,guesses:[],gameOver:false};
+function initWordle(){wordleState={targetWord:wordDatabase.wordle[Math.floor(Math.random()*wordDatabase.wordle.length)],currentRow:0,currentTile:0,guesses:Array(6).fill(Array(5).fill("")),gameOver:false};const g=document.getElementById("wordle-grid");g.innerHTML="";for(let i=0;i<6;i++)for(let j=0;j<5;j++){const t=document.createElement("div");t.className="wordle-tile";t.id="tile-"+i+"-"+j;g.appendChild(t)}const k=document.getElementById("wordle-keyboard");k.innerHTML="";["QWERTYUIOP","ASDFGHJKL","ZXCVBNM"].forEach(r=>{const row=document.createElement("div");row.className="keyboard-row";r.split("").forEach(l=>{const b=document.createElement("button");b.className="key-btn";b.textContent=l;b.onclick=function(){handleWordleLetter(l)};row.appendChild(b)});k.appendChild(row)});const last=k.lastElementChild,e=document.createElement("button");e.className="key-btn";e.textContent="ENTER";e.onclick=handleWordleEnter;last.appendChild(e);const bk=document.createElement("button");bk.className="key-btn";bk.textContent="⌫";bk.onclick=handleWordleBackspace;last.insertBefore(bk,last.firstChild)}
+function handleWordleLetter(l){if(wordleState.currentTile<5&&!wordleState.gameOver){const t=document.getElementById("tile-"+wordleState.currentRow+"-"+wordleState.currentTile);t.textContent=l;wordleState.guesses[wordleState.currentRow][wordleState.currentTile]=l;wordleState.currentTile++}}
+function handleWordleBackspace(){if(wordleState.currentTile>0&&!wordleState.gameOver){wordleState.currentTile--;const t=document.getElementById("tile-"+wordleState.currentRow+"-"+wordleState.currentTile);t.textContent="";wordleState.guesses[wordleState.currentRow][wordleState.currentTile]=""}}
+function handleWordleEnter(){if(wordleState.currentTile!==5||wordleState.gameOver)return;const guess=wordleState.guesses[wordleState.currentRow].join("");for(let i=0;i<5;i++){(function(idx){const t=document.getElementById("tile-"+wordleState.currentRow+"-"+idx),l=guess[idx];setTimeout(function(){if(l===wordleState.targetWord[idx]){t.classList.add("correct");updateScore(10)}else if(wordleState.targetWord.includes(l)){t.classList.add("present");updateScore(5)}else{t.classList.add("absent")}},idx*200)})(i)}if(guess===wordleState.targetWord){wordleState.gameOver=true;updateScore(50);setTimeout(function(){alert("Won!");showResults()},1500)}else if(wordleState.currentRow===5){wordleState.gameOver=true;setTimeout(function(){alert("Lost! Word: "+wordleState.targetWord);showResults()},1500)}else{wordleState.currentRow++;wordleState.currentTile=0}}
+let hangmanState={word:"",guessedLetters:[],wrongGuesses:0,maxWrong:6};
+const hangmanStages=["","🪵","🪵🪵","🪵🪵👤","🪵🪵👤🪵","🪵🪵👤🪵🪵","🪵🪵👤🪵🪵🪢"];
+function initHangman(){hangmanState={word:wordDatabase.hangman[Math.floor(Math.random()*wordDatabase.hangman.length)],guessedLetters:[],wrongGuesses:0,maxWrong:6};updateHangmanDisplay();renderHangmanKeyboard()}
+function updateHangmanDisplay(){document.getElementById("hangman-drawing").textContent=hangmanStages[hangmanState.wrongGuesses];document.getElementById("hangman-word").textContent=hangmanState.word.split("").map(l=>hangmanState.guessedLetters.includes(l)?l:"_").join(" ")}
+function renderHangmanKeyboard(){const k=document.getElementById("hangman-keyboard");k.innerHTML="";for(let c=65;c<=90;c++){const b=document.createElement("button");b.className="key-btn";b.textContent=String.fromCharCode(c);b.disabled=hangmanState.guessedLetters.includes(String.fromCharCode(c));b.onclick=function(){handleHangmanGuess(String.fromCharCode(c))};k.appendChild(b)}}
+function handleHangmanGuess(l){if(hangmanState.guessedLetters.includes(l))return;hangmanState.guessedLetters.push(l);if(!hangmanState.word.includes(l))hangmanState.wrongGuesses++;else updateScore(5);updateHangmanDisplay();renderHangmanKeyboard();const won=hangmanState.word.split("").every(c=>hangmanState.guessedLetters.includes(c)),lost=hangmanState.wrongGuesses>=hangmanState.maxWrong;if(won){updateScore(50);setTimeout(()=>{alert("Won!");showResults()},500)}else if(lost){setTimeout(()=>{alert("Lost! Word: "+hangmanState.word);showResults()},500)}}
+let boggleState={grid:[],foundWords:[]};
+function initBoggle(){const letters="ABCDEFGHIJKLMNOPQRSTUVWX".split("");boggleState.grid=Array(4).fill(null).map(()=>Array(4).fill(null).map(()=>letters[Math.floor(Math.random()*letters.length)]));boggleState.foundWords=[];const el=document.getElementById("boggle-grid");el.innerHTML="";for(let i=0;i<4;i++)for(let j=0;j<4;j++){const t=document.createElement("div");t.className="boggle-tile";t.textContent=boggleState.grid[i][j];el.appendChild(t)}document.getElementById("boggle-found").querySelector(".found-words-list").innerHTML="";document.getElementById("boggle-input").value=""}
+function submitBoggleWord(){const inp=document.getElementById("boggle-input"),w=inp.value.toUpperCase().trim();if(w.length<3){alert("Min 3 letters!");return}if(boggleState.foundWords.includes(w)){alert("Already found!");return}boggleState.foundWords.push(w);updateScore(w.length*2);const lst=document.getElementById("boggle-found").querySelector(".found-words-list"),we=document.createElement("span");we.className="found-word";we.textContent=w;lst.appendChild(we);inp.value=""}
+function initWordSearch(){const el=document.getElementById("wordsearch-grid");el.innerHTML="";const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ";for(let i=0;i<100;i++){const c=document.createElement("div");c.className="wordsearch-cell";c.textContent=letters[Math.floor(Math.random()*letters.length)];el.appendChild(c)}document.getElementById("wordsearch-words").querySelector(".words-to-find").innerHTML=["CODE","GAME","WORD","PLAY","FUN"].map(w=>"<span>"+w+"</span>").join("")}
+function initSpellingBee(){document.getElementById("bee-center").textContent="E";const outer=document.getElementById("bee-outer");outer.innerHTML="";["A","C","T","R","S","D"].forEach((l,i)=>{const el=document.createElement("div");el.className="outer-letter";el.textContent=l;const angle=(i*60)*Math.PI/180;el.style.left=(120+100*Math.cos(angle))+"px";el.style.top=(120+100*Math.sin(angle))+"px";el.onclick=function(){document.getElementById("bee-input").value+=l};outer.appendChild(el)});document.getElementById("bee-found").querySelector(".found-words").innerHTML="";document.getElementById("bee-input").value=""}
+function submitBeeWord(){const inp=document.getElementById("bee-input"),w=inp.value.toUpperCase().trim();if(w.length<4){alert("Min 4 letters!");return}updateScore(w.length*3);const lst=document.getElementById("bee-found").querySelector(".found-words"),we=document.createElement("span");we.className="found-word";we.textContent=w;lst.appendChild(we);inp.value=""}
+function initUnscramble(){const item=wordDatabase.unscramble[Math.floor(Math.random()*wordDatabase.unscramble.length)];document.getElementById("unscramble-letters").innerHTML=item.word.split("").map(l=>"<div class=\"scramble-tile\">"+l+"</div>").join("");document.getElementById("unscramble-hint").textContent="Hint: "+item.hint;document.getElementById("unscramble-input").value="";document.getElementById("unscramble-input").dataset.answer=item.word}
+function submitUnscrambleWord(){const inp=document.getElementById("unscramble-input"),w=inp.value.toUpperCase().trim(),ans=inp.dataset.answer;if(w===ans){updateScore(100);setTimeout(()=>{alert("Correct!");initUnscramble()},500)}else{alert("Try again!")}inp.value=""}
+function initConnections(){const el=document.getElementById("connections-grid");el.innerHTML="";const words=wordDatabase.connections.flatMap(c=>c.words).sort(()=>Math.random()-0.5);words.forEach(w=>{const d=document.createElement("div");d.className="connection-word";d.textContent=w;d.onclick=function(){d.classList.toggle("selected")};el.appendChild(d)});document.getElementById("connections-groups").querySelector(".groups-found").innerHTML=""}
+function initScrabble(){const rack=document.getElementById("scrabble-rack");rack.innerHTML="";const letters="EEEEEOOAINRTLSUCDMHPGFBWYVKXJQZ".split("");for(let i=0;i<7;i++){const l=letters[Math.floor(Math.random()*letters.length)],t=document.createElement("div");t.className="scrabble-tile";t.innerHTML=l+"<small>"+letterValues[l]+"</small>";rack.appendChild(t)}const board=document.getElementById("scrabble-board");board.innerHTML="";for(let i=0;i<49;i++){const c=document.createElement("div");c.className="board-cell";board.appendChild(c)}document.getElementById("scrabble-input").value="";document.getElementById("scrabble-round-score").textContent="Round Score: 0"}
+function submitScrabbleWord(){const inp=document.getElementById("scrabble-input"),w=inp.value.toUpperCase().trim();if(w.length<2){alert("Min 2 letters!");return}let s=0;for(let i=0;i<w.length;i++)s+=letterValues[w[i]]||1;updateScore(s);document.getElementById("scrabble-round-score").textContent="Round Score: "+s;inp.value=""}
+window.showScreen=showScreen;window.showMainMenu=showMainMenu;window.showGameModeSelect=showGameModeSelect;window.selectMode=selectMode;window.pauseGame=pauseGame;window.resumeGame=resumeGame;window.showResults=showResults;window.showResultsFromPause=showResultsFromPause;window.playAgain=playAgain;window.quitGame=quitGame;window.showHint=showHint;window.showLeaderboard=showLeaderboard;window.showLeaderboardTab=showLeaderboardTab;window.showAchievements=showAchievements;window.showHowToPlay=showHowToPlay;window.closeModal=closeModal;window.submitBoggleWord=submitBoggleWord;window.submitBeeWord=submitBeeWord;window.submitUnscrambleWord=submitUnscrambleWord;window.submitScrabbleWord=submitScrabbleWord;window.shareResult=shareResult;
