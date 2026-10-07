@@ -1098,6 +1098,8 @@ body::before {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    padding: 1rem;
+    overflow-y: auto;
 }
 
 .modal.hidden {
@@ -1111,9 +1113,30 @@ body::before {
     padding: 3rem;
     max-width: 500px;
     width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
     text-align: center;
     box-shadow: 0 0 50px rgba(0, 245, 255, 0.3);
     animation: modalPop 0.3s;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-content.leaderboard-content,
+.modal-content.achievements-content {
+    max-width: 700px;
+}
+
+.modal-content.howto-content {
+    max-width: 800px;
+    text-align: left;
+}
+
+.modal-content.howto-content h2 {
+    text-align: center;
+}
+
+.modal-content.results-content {
+    max-width: 550px;
 }
 
 @keyframes modalPop {
@@ -1412,8 +1435,149 @@ body::before {
         height: 50px;
     }
     
+    .modal {
+        align-items: flex-start;
+        padding: 1rem;
+        padding-top: 2rem;
+    }
+
     .modal-content {
-        padding: 2rem;
+        padding: 1.5rem;
+        width: 95%;
+        max-width: none;
+        max-height: 85vh;
+        border-radius: 15px;
+    }
+
+    .modal-content h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .modal-content.howto-content {
+        max-width: 95%;
+        padding: 1.2rem;
+    }
+
+    .howto-modes {
+        gap: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .howto-mode {
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .howto-mode h3 {
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .howto-mode p {
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+    .results-stats {
+        gap: 0.6rem;
+        margin-bottom: 1rem;
+    }
+
+    .result-item {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+
+    .quote-section {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+
+    .result-quote {
+        font-size: 0.95rem;
+    }
+
+    .leaderboard-entry {
+        padding: 0.8rem;
+    }
+
+    .achievement-item {
+        padding: 0.8rem;
+        gap: 0.8rem;
+    }
+
+    .achievement-icon {
+        font-size: 1.8rem;
+    }
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-back {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 1rem;
+        width: 98%;
+        border-radius: 12px;
+    }
+
+    .modal-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .howto-mode {
+        padding: 0.8rem;
+    }
+
+    .mode-container {
+        padding: 1rem;
+    }
+
+    .mode-container h2 {
+        font-size: 1.8rem;
+    }
+
+    .game-content {
+        padding: 1rem;
+    }
+
+    .wordsearch-grid {
+        grid-template-columns: repeat(10, 28px);
+    }
+
+    .wordsearch-cell {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
+
+    .connections-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .boggle-grid {
+        gap: 6px;
+        padding: 10px;
+    }
+
+    .boggle-tile {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .scrabble-board {
+        grid-template-columns: repeat(7, 35px);
+    }
+
+    .board-cell {
+        width: 35px;
+        height: 35px;
     }
 }
 
