@@ -116,7 +116,8 @@
         <!-- Navigation Bar -->
         <div class="nav-bar">
             <div class="nav-left">
-                <button class="nav-btn" onclick="pauseGame()">⏸️</button>
+                <button class="nav-btn home-btn" onclick="quitGame()" title="Back to Home">🏠 Home</button>
+                <button class="nav-btn" onclick="pauseGame()" title="Pause">⏸️</button>
                 <span class="game-mode-title" id="current-mode">Wordle</span>
             </div>
             <div class="nav-center">
@@ -130,11 +131,14 @@
                 </div>
             </div>
             <div class="nav-right">
-                <button class="nav-btn" onclick="showHint()" title="Hint">💡</button>
-                <button class="nav-btn" onclick="showResults()" title="Results">📊</button>
-                <button class="nav-btn" onclick="quitGame()" title="Quit">🚪</button>
+                <button class="nav-btn" onclick="showHint()" title="Hint">💡 Hint</button>
+                <button class="nav-btn" onclick="showResults()" title="Results">📊 Results</button>
+                <button class="nav-btn quit-btn" onclick="quitGame()" title="Quit to Menu">🚪 Quit</button>
             </div>
         </div>
+
+        <!-- Floating Home Button for Mobile -->
+        <button class="floating-home-btn" onclick="quitGame()" title="Back to Home">🏠</button>
 
         <!-- Game Content -->
         <div class="game-content">

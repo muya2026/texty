@@ -454,6 +454,56 @@ body::before {
     box-shadow: var(--neon-glow);
 }
 
+.nav-btn.home-btn {
+    background: linear-gradient(135deg, var(--primary-cyan), var(--primary-purple));
+    border-color: var(--primary-cyan);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    box-shadow: var(--neon-glow);
+}
+
+.nav-btn.home-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.8);
+}
+
+.nav-btn.quit-btn {
+    background: rgba(255, 0, 100, 0.15);
+    border-color: rgba(255, 0, 100, 0.4);
+}
+
+.nav-btn.quit-btn:hover {
+    background: rgba(255, 0, 100, 0.25);
+    box-shadow: 0 0 15px rgba(255, 0, 100, 0.4);
+}
+
+.floating-home-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-cyan), var(--primary-purple));
+    border: 2px solid rgba(255,255,255,0.2);
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 245, 255, 0.4);
+    z-index: 90;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.floating-home-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 30px rgba(0, 245, 255, 0.6);
+}
+
 .game-mode-title {
     font-size: 1.3rem;
     font-weight: bold;
@@ -1854,6 +1904,21 @@ body::before {
     
     .nav-left, .nav-right {
         gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .nav-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 1rem;
+    }
+    
+    .nav-btn.home-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .floating-home-btn {
+        display: flex;
     }
     
     .game-mode-title {
