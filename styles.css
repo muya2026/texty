@@ -1210,8 +1210,8 @@ body::before {
 }
 
 .modal-content.howto-content .howto-modes {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     margin-bottom: 1.5rem;
     overflow: visible;
@@ -2073,6 +2073,12 @@ body::before {
     .howto-modes {
         gap: 0.8rem;
         margin-bottom: 1rem;
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content.howto-content .howto-modes {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
     }
 
     .howto-mode {
