@@ -1217,6 +1217,61 @@ body::before {
     overflow: visible;
 }
 
+.modal-content.howto-content .howto-modes .howto-mode {
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border: 1px solid rgba(0, 245, 255, 0.15);
+    border-left: 4px solid var(--primary-cyan);
+    border-radius: 12px;
+    padding: 1.2rem;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 110px;
+}
+
+.modal-content.howto-content .howto-modes .howto-mode:hover {
+    transform: translateY(-3px);
+    border-left-color: var(--primary-magenta);
+    border-color: rgba(255, 0, 255, 0.3);
+    box-shadow: 0 5px 20px rgba(0, 245, 255, 0.15);
+    background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+}
+
+.howto-subtitle {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.5px;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--text-light);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+.modal-close-btn:hover {
+    background: rgba(255, 0, 100, 0.2);
+    border-color: rgba(255, 0, 100, 0.4);
+    transform: rotate(90deg);
+    color: #ff0064;
+}
+
 .modal-content.howto-content .btn-back {
     position: sticky;
     bottom: -2.5rem;
