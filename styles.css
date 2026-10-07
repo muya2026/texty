@@ -1661,34 +1661,174 @@ body::before {
     line-height: 1.6;
 }
 
-/* Responsive Design */
+/* Base Responsive Fixes for PC + Mobile */
+.menu-container {
+    width: 100%;
+    max-width: 1000px;
+    padding: 2rem 1rem;
+}
+
+.player-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    max-width: 700px;
+    margin: 0 auto 2rem;
+}
+
+.stat-box {
+    min-width: 0;
+    width: 100%;
+}
+
+.mode-container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 2rem 1rem;
+    box-sizing: border-box;
+}
+
+.game-content {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Fix all game containers to be responsive */
+.boggle-found,
+.spellingbee-found,
+.connections-groups,
+.boggle-found,
+#bee-found,
+#connections-groups {
+    min-width: 0 !important;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+}
+
+.wordsearch-container,
+.boggle-container,
+.spellingbee-container,
+.connections-container,
+.scrabble-container,
+.unscramble-container,
+.hangman-container,
+.wordle-container {
+    width: 100%;
+    max-width: 900px;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+.bee-hive {
+    max-width: 100%;
+    width: 300px;
+    height: 300px;
+    margin: 0 auto;
+}
+
+.boggle-input,
+.spellingbee-input,
+.unscramble-input,
+.scrabble-input {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.boggle-input input,
+.spellingbee-input input,
+.unscramble-input input,
+.scrabble-input input {
+    flex: 1;
+    min-width: 150px;
+    max-width: 100%;
+}
+
+/* Responsive Design - Tablet and Mobile */
+@media (max-width: 1024px) {
+    .game-title {
+        font-size: 4.5rem;
+    }
+    
+    .mode-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.2rem;
+    }
+}
+
 @media (max-width: 768px) {
     .game-title {
         font-size: 3rem;
     }
     
+    .tagline {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
     .player-stats {
-        gap: 1rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+        max-width: 100%;
+        padding: 0 1rem;
     }
     
     .stat-box {
-        min-width: 100px;
-        padding: 1rem;
+        min-width: 0;
+        padding: 1rem 0.5rem;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
     }
     
     .mode-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 1rem;
+    }
+    
+    .mode-card {
+        padding: 1.2rem;
+    }
+    
+    .mode-card h3 {
+        font-size: 1.2rem;
     }
     
     .nav-bar {
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 0.8rem;
+        padding: 0.8rem 1rem;
     }
     
     .nav-center {
         order: 3;
         width: 100%;
         justify-content: center;
+        gap: 1rem;
+    }
+    
+    .nav-left, .nav-right {
+        gap: 0.5rem;
+    }
+    
+    .game-mode-title {
+        font-size: 1.1rem;
+    }
+    
+    .score-value, .timer-value {
+        font-size: 1.2rem;
+    }
+    
+    .wordle-grid {
+        gap: 4px;
+        padding: 5px;
     }
     
     .wordle-tile {
@@ -1697,23 +1837,123 @@ body::before {
         font-size: 1.5rem;
     }
     
+    .wordle-keyboard {
+        gap: 6px;
+        padding: 0 0.5rem;
+    }
+    
+    .keyboard-row {
+        gap: 4px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .key-btn {
+        min-width: 32px;
+        height: 42px;
+        font-size: 1rem;
+        padding: 0 0.3rem;
+    }
+    
+    .boggle-grid {
+        gap: 6px;
+        padding: 12px;
+    }
+    
     .boggle-tile {
+        width: 55px;
+        height: 55px;
+        font-size: 1.6rem;
+    }
+    
+    .wordsearch-grid {
+        gap: 2px;
+        padding: 10px;
+    }
+    
+    .wordsearch-cell {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    
+    .wordsearch-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .connections-grid {
+        gap: 8px;
+        padding: 10px;
+    }
+    
+    .connection-word {
+        padding: 0.8rem 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .bee-hive {
+        width: 280px;
+        height: 280px;
+    }
+    
+    .center-letter {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+    }
+    
+    .outer-letter {
         width: 50px;
         height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .scrabble-rack {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+        padding: 0.8rem;
+    }
+    
+    .scrabble-tile {
+        width: 42px;
+        height: 42px;
+        font-size: 1.2rem;
+    }
+    
+    .scrabble-board {
+        gap: 2px;
+        padding: 8px;
+    }
+    
+    .board-cell {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .scrambled-letters {
+        gap: 6px;
+    }
+    
+    .scramble-tile {
+        width: 42px;
+        height: 42px;
+        font-size: 1.2rem;
     }
     
     .modal {
-        align-items: flex-start;
         padding: 1rem;
-        padding-top: 2rem;
+        align-items: flex-start;
     }
 
     .modal-content {
         padding: 1.5rem;
         width: 95%;
-        max-width: none;
-        max-height: 85vh;
+        max-width: 600px;
         border-radius: 15px;
+        margin: 1rem auto;
     }
 
     .modal-content h2 {
@@ -1723,6 +1963,7 @@ body::before {
 
     .modal-content.howto-content {
         max-width: 95%;
+        max-height: 90vh;
         padding: 1.2rem;
     }
 
@@ -1812,64 +2053,279 @@ body::before {
 }
 
 @media (max-width: 480px) {
-    .modal-content {
-        padding: 1rem;
-        width: 98%;
-        border-radius: 12px;
+    .game-title {
+        font-size: 2.5rem;
     }
-
-    .modal-content h2 {
-        font-size: 1.5rem;
+    
+    .tagline {
+        font-size: 1rem;
+        letter-spacing: 1px;
     }
-
-    .howto-mode {
-        padding: 0.8rem;
+    
+    .player-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
     }
-
+    
+    .stat-box {
+        padding: 0.8rem 0.4rem;
+    }
+    
+    .stat-value {
+        font-size: 1.3rem;
+    }
+    
     .mode-container {
-        padding: 1rem;
+        padding: 1rem 0.5rem;
     }
 
     .mode-container h2 {
         font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+    
+    .mode-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+    }
+    
+    .mode-card {
+        padding: 1rem 0.5rem;
+    }
+    
+    .mode-icon {
+        font-size: 2rem;
+    }
+    
+    .mode-card h3 {
+        font-size: 1rem;
+    }
+    
+    .mode-card p {
+        font-size: 0.8rem;
     }
 
     .game-content {
-        padding: 1rem;
+        padding: 1rem 0.5rem;
+    }
+
+    .wordle-tile {
+        width: 38px;
+        height: 38px;
+        font-size: 1.2rem;
+    }
+    
+    .key-btn {
+        min-width: 28px;
+        height: 38px;
+        font-size: 0.9rem;
     }
 
     .wordsearch-grid {
         grid-template-columns: repeat(10, 28px);
+        gap: 2px;
+        padding: 8px;
     }
 
     .wordsearch-cell {
         width: 28px;
         height: 28px;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
 
     .connections-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    
+    .connection-word {
+        padding: 0.6rem 0.3rem;
+        font-size: 0.8rem;
     }
 
     .boggle-grid {
-        gap: 6px;
-        padding: 10px;
+        gap: 5px;
+        padding: 8px;
     }
 
     .boggle-tile {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+    
+    .boggle-found,
+    .spellingbee-found,
+    .connections-groups {
+        padding: 1rem;
+    }
+
+    .bee-hive {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .center-letter {
         width: 60px;
         height: 60px;
-        font-size: 1.5rem;
+        font-size: 1.8rem;
+    }
+    
+    .outer-letter {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+    }
+
+    .scrabble-rack {
+        gap: 3px;
+        padding: 0.6rem;
+    }
+    
+    .scrabble-tile {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
     }
 
     .scrabble-board {
-        grid-template-columns: repeat(7, 35px);
+        grid-template-columns: repeat(7, 32px);
+        gap: 2px;
+        padding: 6px;
     }
 
     .board-cell {
-        width: 35px;
-        height: 35px;
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    
+    .scramble-tile {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .hangman-word {
+        font-size: 1.5rem;
+        letter-spacing: 0.3rem;
+    }
+    
+    .hangman-drawing {
+        font-size: 4rem;
+        min-height: 100px;
+    }
+
+    .modal {
+        padding: 0.5rem;
+    }
+    
+    .modal-content {
+        padding: 1rem;
+        width: 98%;
+        border-radius: 12px;
+        margin: 0.5rem auto;
+    }
+
+    .modal-content h2 {
+        font-size: 1.5rem;
+    }
+    
+    .modal-content.howto-content {
+        max-height: 95vh;
+        padding: 1rem;
+    }
+
+    .howto-mode {
+        padding: 0.8rem;
+    }
+    
+    .howto-mode h3 {
+        font-size: 0.95rem;
+    }
+    
+    .howto-mode p {
+        font-size: 0.8rem;
+    }
+    
+    .reward-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.4rem;
+    }
+    
+    .reward-item {
+        padding: 0.6rem 0.2rem;
+    }
+    
+    .reward-icon {
+        font-size: 1.2rem;
+    }
+    
+    .reward-label {
+        font-size: 0.7rem;
+    }
+    
+    .reward-value {
+        font-size: 0.95rem;
+    }
+    
+    .share-buttons {
+        gap: 0.6rem;
+    }
+    
+    .share-btn {
+        width: 42px;
+        height: 42px;
+    }
+}
+
+@media (max-width: 360px) {
+    .player-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .mode-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .wordle-tile {
+        width: 34px;
+        height: 34px;
+        font-size: 1.1rem;
+    }
+    
+    .boggle-tile {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .connections-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Large PC screens - ensure modals don't overflow */
+@media (min-width: 1025px) {
+    .modal {
+        padding: 3rem 1rem;
+    }
+    
+    .modal-content.howto-content {
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+    
+    .modal-content.howto-content .howto-modes {
+        max-height: none;
+        overflow-y: visible;
+        padding-right: 0;
+    }
+    
+    .modal-content.results-content,
+    .modal-content.leaderboard-content,
+    .modal-content.achievements-content {
+        max-height: 85vh;
+        overflow-y: auto;
     }
 }
 

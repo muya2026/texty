@@ -190,13 +190,19 @@ function updateScore(p) {
 function pauseGame() {
   gameState.isPaused = true;
   const modal = document.getElementById("pause-modal");
-  if (modal) modal.classList.remove("hidden");
+  if (modal) {
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
 }
 
 function resumeGame() {
   gameState.isPaused = false;
   const modal = document.getElementById("pause-modal");
   if (modal) modal.classList.add("hidden");
+  if (!document.querySelector(".modal:not(.hidden)")) {
+    document.body.style.overflow = "";
+  }
 }
 
 function showResultsFromPause() {
@@ -327,7 +333,10 @@ function showResults() {
   }
 
   const resultsModal = document.getElementById("results-modal");
-  if (resultsModal) resultsModal.classList.remove("hidden");
+  if (resultsModal) {
+    resultsModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
 
   // Confetti effect for 3 stars or level up
   if (stars === 3 || leveledUp) {
@@ -426,7 +435,10 @@ function showHint() {
 
 function showLeaderboard() {
   const modal = document.getElementById("leaderboard-modal");
-  if (modal) modal.classList.remove("hidden");
+  if (modal) {
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
   renderLeaderboard("all");
 }
 
@@ -495,7 +507,10 @@ function saveScore(mode, score) {
 
 function showAchievements() {
   const modal = document.getElementById("achievements-modal");
-  if (modal) modal.classList.remove("hidden");
+  if (modal) {
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
   renderAchievements();
 }
 
@@ -532,13 +547,48 @@ function renderAchievements() {
 
 function showHowToPlay() {
   const modal = document.getElementById("howto-modal");
-  if (modal) modal.classList.remove("hidden");
+  if (modal) {
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
 }
 
 function closeModal(id) {
   const el = document.getElementById(id);
   if (el) el.classList.add("hidden");
+  // Unlock scroll if no other modal open
+  setTimeout(() => {
+    if (!document.querySelector(".modal:not(.hidden)")) {
+      document.body.style.overflow = "";
+    }
+  }, 100);
 }
+
+// Modal backdrop click to close + ESC key handling
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("modal") && !e.target.classList.contains("hidden")) {
+    e.target.classList.add("hidden");
+    if (!document.querySelector(".modal:not(.hidden)")) {
+      document.body.style.overflow = "";
+    }
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    const openModals = document.querySelectorAll(".modal:not(.hidden)");
+    openModals.forEach(modal => {
+      if (modal.id === "pause-modal" && gameState.currentScreen === "game-screen") {
+        resumeGame();
+      } else if (modal.id !== "pause-modal") {
+        modal.classList.add("hidden");
+      }
+    });
+    if (!document.querySelector(".modal:not(.hidden)")) {
+      document.body.style.overflow = "";
+    }
+  }
+});
 
 function saveGameData() {
   try {
