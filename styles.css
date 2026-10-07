@@ -1085,40 +1085,42 @@ body::before {
     text-transform: uppercase;
 }
 
-/* Modal Styles */
+/* Modal Styles - Fixed for PC scrolling */
 .modal {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     z-index: 1000;
-    padding: 1rem;
+    padding: 2rem 1rem;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .modal.hidden {
-    display: none;
+    display: none !important;
 }
 
 .modal-content {
-    background: linear-gradient(135deg, rgba(10, 10, 26, 0.95), rgba(26, 10, 46, 0.95));
+    background: linear-gradient(135deg, rgba(10, 10, 26, 0.98), rgba(26, 10, 46, 0.98));
     border: 2px solid rgba(0, 245, 255, 0.3);
     border-radius: 20px;
-    padding: 3rem;
+    padding: 2.5rem;
     max-width: 500px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
+    width: 100%;
+    max-height: none;
     text-align: center;
     box-shadow: 0 0 50px rgba(0, 245, 255, 0.3);
     animation: modalPop 0.3s;
     -webkit-overflow-scrolling: touch;
+    margin: auto;
+    position: relative;
+    flex-shrink: 0;
 }
 
 .modal-content.leaderboard-content,
@@ -1128,15 +1130,36 @@ body::before {
 
 .modal-content.howto-content {
     max-width: 800px;
+    width: 100%;
     text-align: left;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .modal-content.howto-content h2 {
     text-align: center;
+    flex-shrink: 0;
+}
+
+.modal-content.howto-content .howto-modes {
+    overflow-y: auto;
+    max-height: none;
+    flex: 1;
+    padding-right: 0.5rem;
+}
+
+.modal-content.howto-content .btn-back {
+    flex-shrink: 0;
+    margin-top: 1.5rem;
 }
 
 .modal-content.results-content {
-    max-width: 550px;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
 }
 
 @keyframes modalPop {
