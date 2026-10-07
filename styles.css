@@ -65,6 +65,31 @@ body::before {
     align-items: center;
 }
 
+#game-screen.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+#game-screen .game-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+.shake {
+    animation: shake 0.4s ease-in-out;
+}
+
 /* Loading Screen */
 #loading-screen {
     background: radial-gradient(ellipse at center, #1a0a2e 0%, var(--bg-darker) 100%);
