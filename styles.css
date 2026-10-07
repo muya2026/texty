@@ -1185,6 +1185,250 @@ body::before {
     flex-wrap: wrap;
 }
 
+/* Reward Section */
+.reward-section {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(0, 245, 255, 0.15));
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    text-align: center;
+    animation: rewardPop 0.6s ease-out 0.3s both;
+}
+
+@keyframes rewardPop {
+    from { opacity: 0; transform: scale(0.9) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.reward-section h3 {
+    color: var(--primary-purple);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+.reward-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.reward-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.reward-item::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.5s;
+    opacity: 0;
+}
+
+.reward-item:hover::before {
+    opacity: 1;
+    animation: shine 1s;
+}
+
+.reward-item:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.reward-item.coins {
+    border-color: rgba(251, 191, 36, 0.4);
+    background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(245,158,11,0.1));
+}
+
+.reward-item.coins:hover {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+}
+
+.reward-item.xp {
+    border-color: rgba(0, 245, 255, 0.4);
+    background: linear-gradient(135deg, rgba(0,245,255,0.1), rgba(139,92,246,0.1));
+}
+
+.reward-item.xp:hover {
+    box-shadow: var(--neon-glow);
+}
+
+.reward-item.level {
+    border-color: rgba(0, 255, 136, 0.4);
+    background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(16,185,129,0.1));
+}
+
+.reward-item.level:hover {
+    box-shadow: var(--green-glow);
+}
+
+.reward-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.2rem;
+}
+
+.reward-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.reward-value {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--text-light);
+    text-shadow: 0 0 10px currentColor;
+}
+
+.reward-item.coins .reward-value {
+    color: #fbbf24;
+}
+
+.reward-item.xp .reward-value {
+    color: var(--primary-cyan);
+}
+
+.reward-item.level .reward-value {
+    color: var(--primary-green);
+}
+
+.reward-bonuses {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    text-align: left;
+}
+
+.bonus-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.8rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    border-left: 3px solid transparent;
+}
+
+.bonus-item.positive {
+    border-left-color: var(--primary-green);
+    color: var(--primary-green);
+}
+
+.bonus-item.neutral {
+    border-left-color: var(--text-dim);
+    color: var(--text-dim);
+}
+
+.bonus-item.negative {
+    border-left-color: #ef4444;
+    color: #ef4444;
+}
+
+.level-progress {
+    margin-top: 1rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-cyan), var(--primary-purple), var(--primary-green));
+    border-radius: 6px;
+    transition: width 1s ease-out 0.5s;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.progress-text {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+.achievement-unlocked {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(245,158,11,0.15));
+    border: 1px solid rgba(251,191,36,0.4);
+    border-radius: 12px;
+    animation: achievementGlow 2s infinite alternate;
+}
+
+@keyframes achievementGlow {
+    from { box-shadow: 0 0 10px rgba(251,191,36,0.3); }
+    to { box-shadow: 0 0 20px rgba(251,191,36,0.6); }
+}
+
+.achievement-unlocked h4 {
+    color: #fbbf24;
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+}
+
+.unlocked-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255,255,255,0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    margin: 0.3rem;
+    font-size: 0.9rem;
+    border: 1px solid rgba(251,191,36,0.3);
+}
+
+/* Confetti */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    z-index: 2000;
+}
+
 /* Quote Section */
 .quote-section {
     background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
@@ -1515,6 +1759,31 @@ body::before {
     .btn-secondary,
     .btn-back {
         padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .reward-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.6rem;
+    }
+
+    .reward-item {
+        padding: 0.8rem 0.3rem;
+    }
+
+    .reward-icon {
+        font-size: 1.4rem;
+    }
+
+    .reward-value {
+        font-size: 1.1rem;
+    }
+
+    .reward-section {
+        padding: 1rem;
+    }
+
+    .reward-section h3 {
         font-size: 1rem;
     }
 }

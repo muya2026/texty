@@ -35,8 +35,12 @@
                     <span class="stat-value" id="menu-level">1</span>
                 </div>
                 <div class="stat-box">
+                    <span class="stat-label">Coins</span>
+                    <span class="stat-value" id="menu-coins">0</span>
+                </div>
+                <div class="stat-box">
                     <span class="stat-label">Achievements</span>
-                    <span class="stat-value" id="menu-achievements">0/12</span>
+                    <span class="stat-value" id="menu-achievements">0/8</span>
                 </div>
             </div>
 
@@ -283,6 +287,42 @@
                     <span class="result-value" id="result-stars">⭐</span>
                 </div>
             </div>
+
+            <!-- Reward Section -->
+            <div class="reward-section" id="reward-section">
+                <h3>🎁 Rewards Earned</h3>
+                <div class="reward-grid">
+                    <div class="reward-item coins">
+                        <span class="reward-icon">💰</span>
+                        <span class="reward-label">Coins</span>
+                        <span class="reward-value" id="reward-coins">+0</span>
+                    </div>
+                    <div class="reward-item xp">
+                        <span class="reward-icon">⚡</span>
+                        <span class="reward-label">XP</span>
+                        <span class="reward-value" id="reward-xp">+0</span>
+                    </div>
+                    <div class="reward-item level">
+                        <span class="reward-icon">🏆</span>
+                        <span class="reward-label">Level</span>
+                        <span class="reward-value" id="reward-level">1</span>
+                    </div>
+                </div>
+                <div class="reward-bonuses" id="reward-bonuses">
+                    <!-- Bonus breakdown populated by JS -->
+                </div>
+                <div class="level-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="level-progress-fill" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="level-progress-text">0 / 100 XP to next level</span>
+                </div>
+                <div class="achievement-unlocked" id="achievement-unlocked" style="display:none">
+                    <h4>⭐ Achievement Unlocked!</h4>
+                    <div id="unlocked-list"></div>
+                </div>
+            </div>
+
             <div class="quote-section">
                 <p class="result-quote" id="result-quote">"The limits of my language mean the limits of my world."</p>
                 <p class="result-author" id="result-author">- Ludwig Wittgenstein 🇦🇹</p>

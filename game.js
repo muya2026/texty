@@ -1,15 +1,19 @@
-// TEXTY Game JS - Fixed Version
+// TEXTY Game JS - Fixed Version with Reward System
 const gameState = {
   currentScreen: "loading-screen",
   currentMode: null,
   score: 0,
   totalScore: 0,
+  coins: 0,
+  xp: 0,
+  level: 1,
   startTime: null,
   timerInterval: null,
   elapsedTime: 0,
   isPaused: false,
   achievements: [],
-  leaderboard: []
+  leaderboard: [],
+  unlockedAchievements: []
 };
 
 const wordDatabase = {
@@ -219,12 +223,14 @@ function showResults() {
   const wordsEl = document.getElementById("result-words");
   if (wordsEl) wordsEl.textContent = Math.floor(gameState.score / 10);
 
+  const accValue = Math.min(100, Math.floor(Math.random() * 20) + 80);
   const accEl = document.getElementById("result-accuracy");
-  if (accEl) accEl.textContent = (Math.min(100, Math.floor(Math.random() * 20) + 80)) + "%";
+  if (accEl) accEl.textContent = accValue + "%";
 
+  const stars = gameState.score >= 100 ? 3 : gameState.score >= 50 ? 2 : 1;
   const starsEl = document.getElementById("result-stars");
   if (starsEl) {
-    starsEl.textContent = gameState.score >= 100 ? "⭐⭐⭐" : gameState.score >= 50 ? "⭐⭐" : "⭐";
+    starsEl.textContent = "⭐".repeat(stars);
   }
 
   const quoteEl = document.getElementById("result-quote");
@@ -233,11 +239,153 @@ function showResults() {
   const authorEl = document.getElementById("result-author");
   if (authorEl) authorEl.textContent = `- ${quote.author} ${quote.country}`;
 
+  // --- REWARD CALCULATION ---
+  const timeBonus = gameState.elapsedTime < 60 ? 50 : gameState.elapsedTime < 120 ? 25 : gameState.elapsedTime < 180 ? 10 : 0;
+  const accuracyBonus = accValue >= 95 ? 30 : accValue >= 85 ? 15 : 0;
+  const starBonus = stars * 10;
+  const baseCoins = gameState.score;
+  const totalCoins = baseCoins + timeBonus + accuracyBonus + starBonus;
+  const xpEarned = Math.floor(gameState.score * 1.5 + timeBonus + accuracyBonus + starBonus * 2);
+
+  // Level system: 500 XP per level
+  const oldLevel = gameState.level || 1;
+  const oldXp = gameState.xp || 0;
+  const newXpTotal = oldXp + xpEarned;
+  const newLevel = Math.floor(newXpTotal / 500) + 1;
+  const xpForNextLevel = newLevel * 500;
+  const xpProgress = newXpTotal % 500;
+  const xpNeeded = 500 - xpProgress;
+
+  // Update gameState
+  gameState.coins = (gameState.coins || 0) + totalCoins;
+  gameState.xp = newXpTotal;
+  gameState.level = newLevel;
+  const leveledUp = newLevel > oldLevel;
+
+  // Populate reward UI
+  const coinsEl = document.getElementById("reward-coins");
+  if (coinsEl) coinsEl.textContent = `+${totalCoins}`;
+
+  const xpEl = document.getElementById("reward-xp");
+  if (xpEl) xpEl.textContent = `+${xpEarned}`;
+
+  const levelEl = document.getElementById("reward-level");
+  if (levelEl) {
+    levelEl.textContent = leveledUp ? `${oldLevel} → ${newLevel} 🎉` : `${newLevel}`;
+  }
+
+  const bonusesEl = document.getElementById("reward-bonuses");
+  if (bonusesEl) {
+    const bonuses = [
+      {label: `Base Score`, value: `+${baseCoins} coins`, type: "neutral"},
+      timeBonus > 0 ? {label: `⚡ Speed Bonus (<${gameState.elapsedTime < 60 ? '1' : gameState.elapsedTime < 120 ? '2' : '3'}m)`, value: `+${timeBonus}`, type: "positive"} : null,
+      accuracyBonus > 0 ? {label: `🎯 Accuracy Bonus (${accValue}%)`, value: `+${accuracyBonus}`, type: "positive"} : null,
+      {label: `${"⭐".repeat(stars)} Star Bonus`, value: `+${starBonus}`, type: "positive"}
+    ].filter(Boolean);
+
+    bonusesEl.innerHTML = bonuses.map(b => `
+      <div class="bonus-item ${b.type}">
+        <span>${b.label}</span>
+        <span>${b.value}</span>
+      </div>
+    `).join("") + (leveledUp ? `<div class="bonus-item positive"><span>🎉 Level Up! ${oldLevel} → ${newLevel}</span><span>+100 bonus coins!</span></div>` : "");
+
+    if (leveledUp) {
+      gameState.coins += 100;
+      if (coinsEl) coinsEl.textContent = `+${totalCoins + 100}`;
+    }
+  }
+
+  const progressFill = document.getElementById("level-progress-fill");
+  if (progressFill) {
+    const percent = (xpProgress / 500) * 100;
+    setTimeout(() => {
+      progressFill.style.width = percent + "%";
+    }, 300);
+  }
+
+  const progressText = document.getElementById("level-progress-text");
+  if (progressText) {
+    progressText.textContent = leveledUp 
+      ? `Level Up! ${xpProgress} / 500 XP to Level ${newLevel + 1}`
+      : `${xpProgress} / 500 XP • ${xpNeeded} XP to Level ${newLevel + 1}`;
+  }
+
+  // Check achievements
+  const newlyUnlocked = checkAchievements();
+  const achievementEl = document.getElementById("achievement-unlocked");
+  const unlockedList = document.getElementById("unlocked-list");
+  if (achievementEl && unlockedList) {
+    if (newlyUnlocked.length > 0) {
+      achievementEl.style.display = "block";
+      unlockedList.innerHTML = newlyUnlocked.map(a => `
+        <span class="unlocked-badge">${a.icon} ${a.name}</span>
+      `).join("");
+    } else {
+      achievementEl.style.display = "none";
+    }
+  }
+
   const resultsModal = document.getElementById("results-modal");
   if (resultsModal) resultsModal.classList.remove("hidden");
 
+  // Confetti effect for 3 stars or level up
+  if (stars === 3 || leveledUp) {
+    launchConfetti();
+  }
+
   if (gameState.currentMode) {
     saveScore(gameState.currentMode, gameState.score);
+  }
+}
+
+function checkAchievements() {
+  const allAchievements = [
+    {id:"first", name:"First Word", desc:"Complete first puzzle", icon:"🎯", check: () => gameState.leaderboard.length >= 0},
+    {id:"speed", name:"Speed Demon", desc:"Finish under 60s", icon:"⚡", check: () => gameState.elapsedTime < 60},
+    {id:"wordsmith", name:"Wordsmith", desc:"Score 100+ points", icon:"📚", check: () => gameState.score >= 100},
+    {id:"master", name:"Master Mind", desc:"Score 500+ total", icon:"🧠", check: () => gameState.totalScore >= 500},
+    {id:"explorer", name:"Explorer", desc:"Try 3 different modes", icon:"🗺️", check: () => new Set(gameState.leaderboard.map(e=>e.mode)).size >= 2}, // at least 2 since current not yet saved for first game
+    {id:"champion", name:"Champion", desc:"Reach level 5", icon:"🏆", check: () => gameState.level >= 5},
+    {id:"collector", name:"Coin Collector", desc:"Collect 500 coins", icon:"💰", check: () => gameState.coins >= 500},
+    {id:"streak", name:"Star Collector", desc:"Earn 10 stars", icon:"⭐", check: () => gameState.totalScore >= 100}
+  ];
+
+  const newlyUnlocked = [];
+  if (!gameState.unlockedAchievements) gameState.unlockedAchievements = [];
+
+  allAchievements.forEach(ach => {
+    if (!gameState.unlockedAchievements.includes(ach.id) && ach.check()) {
+      gameState.unlockedAchievements.push(ach.id);
+      newlyUnlocked.push(ach);
+    }
+  });
+
+  return newlyUnlocked;
+}
+
+function launchConfetti() {
+  const colors = ["#00f5ff", "#ff00ff", "#8b5cf6", "#00ff88", "#fbbf24"];
+  for (let i = 0; i < 80; i++) {
+    const confetti = document.createElement("div");
+    confetti.className = "confetti";
+    confetti.style.left = Math.random() * 100 + "vw";
+    confetti.style.top = "-10px";
+    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+    confetti.style.borderRadius = Math.random() > 0.5 ? "50%" : "0";
+    document.body.appendChild(confetti);
+
+    const animation = confetti.animate([
+      { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+      { transform: `translateY(${window.innerHeight + 100}px) rotate(${720 + Math.random()*360}deg) translateX(${ (Math.random()-0.5)*200 }px)`, opacity: 0 }
+    ], {
+      duration: 3000 + Math.random() * 2000,
+      easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+      delay: Math.random() * 500
+    });
+
+    animation.onfinish = () => confetti.remove();
   }
 }
 
@@ -352,14 +500,22 @@ function showAchievements() {
 }
 
 function renderAchievements() {
-  const achievements = [
-    {name:"First Word",desc:"Complete first puzzle",icon:"🎯",unlocked: gameState.leaderboard.length > 0},
-    {name:"Speed Demon",desc:"Finish under 60s",icon:"⚡",unlocked: gameState.leaderboard.some(e=>true)}, // simplified
-    {name:"Wordsmith",desc:"Score 100+ points",icon:"📚",unlocked: gameState.totalScore >= 100},
-    {name:"Master Mind",desc:"Score 500+ points",icon:"🧠",unlocked: gameState.totalScore >= 500},
-    {name:"Explorer",desc:"Try 3 different modes",icon:"🗺️",unlocked: new Set(gameState.leaderboard.map(e=>e.mode)).size >= 3},
-    {name:"Champion",desc:"Reach level 5",icon:"🏆",unlocked: Math.floor((gameState.totalScore||0)/100)+1 >=5}
+  const all = [
+    {id:"first", name:"First Word", desc:"Complete first puzzle", icon:"🎯", check: () => gameState.leaderboard.length > 0},
+    {id:"speed", name:"Speed Demon", desc:"Finish under 60s", icon:"⚡", check: () => gameState.unlockedAchievements?.includes("speed")},
+    {id:"wordsmith", name:"Wordsmith", desc:"Score 100+ points in a game", icon:"📚", check: () => gameState.totalScore >= 100 || gameState.unlockedAchievements?.includes("wordsmith")},
+    {id:"master", name:"Master Mind", desc:"Score 500+ total points", icon:"🧠", check: () => gameState.totalScore >= 500},
+    {id:"explorer", name:"Explorer", desc:"Try 3 different modes", icon:"🗺️", check: () => new Set(gameState.leaderboard.map(e=>e.mode)).size >= 3},
+    {id:"champion", name:"Champion", desc:"Reach level 5", icon:"🏆", check: () => (gameState.level||1) >=5},
+    {id:"collector", name:"Coin Collector", desc:"Collect 500 coins", icon:"💰", check: () => (gameState.coins||0) >= 500},
+    {id:"streak", name:"Star Collector", desc:"Earn 3 stars in a game", icon:"⭐", check: () => gameState.unlockedAchievements?.includes("wordsmith") || gameState.totalScore >= 100}
   ];
+
+  const achievements = all.map(a => ({
+    ...a,
+    unlocked: gameState.unlockedAchievements?.includes(a.id) || a.check()
+  }));
+
   const grid = document.getElementById("achievements-grid");
   if (!grid) return;
   grid.innerHTML = achievements.map(x => `
@@ -388,8 +544,12 @@ function saveGameData() {
   try {
     localStorage.setItem("texty_state", JSON.stringify({
       totalScore: gameState.totalScore,
+      coins: gameState.coins,
+      xp: gameState.xp,
+      level: gameState.level,
       achievements: gameState.achievements,
-      leaderboard: gameState.leaderboard
+      leaderboard: gameState.leaderboard,
+      unlockedAchievements: gameState.unlockedAchievements
     }));
   } catch (e) {
     console.warn("Failed to save game data", e);
@@ -402,12 +562,19 @@ function loadGameData() {
     if (s) {
       const d = JSON.parse(s);
       gameState.totalScore = d.totalScore || 0;
+      gameState.coins = d.coins || 0;
+      gameState.xp = d.xp || 0;
+      gameState.level = d.level || Math.floor((d.totalScore||0)/100)+1 || 1;
       gameState.achievements = d.achievements || [];
       gameState.leaderboard = d.leaderboard || [];
+      gameState.unlockedAchievements = d.unlockedAchievements || [];
     }
   } catch (e) {
     console.warn("Failed to load game data, resetting", e);
     gameState.totalScore = 0;
+    gameState.coins = 0;
+    gameState.xp = 0;
+    gameState.level = 1;
     gameState.achievements = [];
     gameState.leaderboard = [];
   }
@@ -416,12 +583,18 @@ function loadGameData() {
 function updateMenuStats() {
   const totalEl = document.getElementById("menu-total-score");
   if (totalEl) totalEl.textContent = gameState.totalScore || 0;
+
   const levelEl = document.getElementById("menu-level");
-  if (levelEl) levelEl.textContent = Math.floor((gameState.totalScore || 0) / 100) + 1;
+  if (levelEl) levelEl.textContent = gameState.level || Math.floor((gameState.totalScore || 0) / 100) + 1 || 1;
+
+  // Also update coins display if exists
+  const coinsEl = document.getElementById("menu-coins");
+  if (coinsEl) coinsEl.textContent = gameState.coins || 0;
+
   const achEl = document.getElementById("menu-achievements");
   if (achEl) {
-    const unlocked = gameState.leaderboard.length > 0 ? 1 : 0; // simplified count
-    achEl.textContent = `${unlocked}/6`;
+    const unlockedCount = gameState.unlockedAchievements ? gameState.unlockedAchievements.length : 0;
+    achEl.textContent = `${unlockedCount}/8`;
   }
 }
 
